@@ -24,11 +24,8 @@ extern "C" {
 #define _DEFINE_VECTOR_INIT_SIZE_FUN(type)                                                          \
     inline void _vector_##type##_size_init(vector_##type* obj, size_t size) {                       \
         assert(obj != NULL && __FUNCTION__": obj is NULL");                                         \
-        printf(__FUNCTION__"1\n");                                                                  \
         free(obj->_buffer);                                                                         \
-        printf(__FUNCTION__"2\n");                                                                  \
         obj->_buffer = (type*)malloc(sizeof(type) * (size > 0 ? size : 1));                         \
-        printf(__FUNCTION__"3\n");                                                                  \
         obj->_size = obj->_capacity = size;                                                         \
         memset(obj->_buffer, 0, obj->_capacity * sizeof(type));                                     \
     }
@@ -75,7 +72,7 @@ extern "C" {
         if (obj != NULL) {                                                                          \
             if (obj->_size >= obj->_capacity) {                                                     \
                 obj->_capacity = (obj->_capacity + 1) * 1.5f;                                       \
-                obj->_buffer = realloc(obj->_buffer, obj->_capacity * sizeof(type));                \
+                obj->_buffer = (type*)realloc(obj->_buffer, obj->_capacity * sizeof(type));                \
             }                                                                                       \
             obj->_buffer[obj->_size++] = value;                                                     \
         }                                                                                           \
