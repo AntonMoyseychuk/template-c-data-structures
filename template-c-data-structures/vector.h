@@ -13,7 +13,6 @@ extern "C" {
 #include <stdio.h>
 
 
-
 #define _DEFINE_VECTOR_INIT_FUN(type)                                                                                           \
     inline void _vector_##type##_init(vector_##type* obj) {                                                                     \
         assert(obj != NULL && "_vector_"#type"_init(vector_"#type"* obj): obj is NULL");                                        \
@@ -140,6 +139,11 @@ extern "C" {
         }                                                                                                                       \
     }
 
+#define _DEFINE_VECTOR_DATA_FUN(type)                                                                                           \
+    inline type* _vector_##type##_data(const vector_##type* obj) {                                                              \
+        return obj != NULL ? obj->_buffer : NULL;                                                                               \
+    }
+
 #define DEFINE_TYPED_VECTOR(type)                                                                                               \
     typedef struct vector_##type {                                                                                              \
         type* _buffer;                                                                                                          \
@@ -161,6 +165,7 @@ extern "C" {
     _DEFINE_VECTOR_ASSIGN_FUN(type);                                                                                            \
     _DEFINE_VECTOR_CLEAR_FUN(type);                                                                                             \
     _DEFINE_VECTOR_RESIZE_FUN(type);                                                                                            \
+    _DEFINE_VECTOR_DATA_FUN(type);                                                                                            \
 
 #define VEC_CREATE(type, vec_name) vector_##type vec_name; vec_name._buffer = NULL; _vector_##type##_init(&vec_name)
 #define VEC_CREATE_SIZED(type, vec_name, size) vector_##type vec_name; vec_name._buffer = NULL; _vector_##type##_size_init(&vec_name, size)
@@ -172,6 +177,7 @@ extern "C" {
 
 #define VEC_SIZE(type, vec_ptr) _vector_##type##_size(vec_ptr)
 #define VEC_CAPACITY(type, vec_ptr) _vector_##type##_capacity(vec_ptr)
+#define VEC_DATA(type, vec_ptr) _vector_##type##_data(vec_ptr)
 
 #define VEC_PUSH_BACK(type, vec_ptr, value) _vector_##type##_push_back(vec_ptr, value)
 #define VEC_POP_BACK(type, vec_ptr) _vector_##type##_pop_back(vec_ptr)
@@ -180,6 +186,7 @@ extern "C" {
 
 #define VEC_EMPTY(type, vec_ptr) _vector_##type##_empty(vec_ptr)
 #define VEC_CLEAR(type, vec_ptr) _vector_##type##_clear(vec_ptr)
+
 #define VEC_RESIZE(type, vec_ptr, size) _vector_##type##_resize(vec_ptr, size)
 
 #ifdef __cplusplus
