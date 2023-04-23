@@ -69,18 +69,18 @@ extern "C" {
 
 #define _DEFINE_VECTOR_PUSH_BACK_FUN(type)                                                          \
     inline void _vector_##type##_push_back(vector_##type* obj, type value) {                        \
-        if (obj != NULL) {                                                                          \
-            if (obj->_size >= obj->_capacity) {                                                     \
-                obj->_capacity = (obj->_capacity + 1) * 1.5f;                                       \
-                obj->_buffer = (type*)realloc(obj->_buffer, obj->_capacity * sizeof(type));                \
-            }                                                                                       \
-            obj->_buffer[obj->_size++] = value;                                                     \
+        assert(obj != NULL && __FUNCTION__": obj is NULL");                                         \
+        if (obj->_size >= obj->_capacity) {                                                         \
+            obj->_capacity = (obj->_capacity + 1) * 1.5f;                                           \
+            obj->_buffer = (type*)realloc(obj->_buffer, obj->_capacity * sizeof(type));             \
         }                                                                                           \
+        obj->_buffer[obj->_size++] = value;                                                         \
     }
 
 #define _DEFINE_VECTOR_POP_BACK_FUN(type)                                                           \
     inline void _vector_##type##_pop_back(vector_##type* obj) {                                     \
-        if (obj != NULL && obj->_size > 0) {                                                        \
+        assert(obj != NULL && __FUNCTION__": obj is NULL");                                         \
+        if (obj->_size > 0) {                                                                       \
             --obj->_size;                                                                           \
         }                                                                                           \
     }
@@ -93,7 +93,8 @@ extern "C" {
 
 #define _DEFINE_VECTOR_ERASE_FUN(type)                                                              \
     inline void _vector_##type##_erase(vector_##type* obj, size_t index) {                          \
-        if (obj != NULL && obj->_buffer != NULL && obj->_size != 0) {                               \
+        assert(obj != NULL && __FUNCTION__": obj is NULL");                                         \
+        if (obj->_buffer != NULL && obj->_size != 0) {                               \
             if (index < obj->_size) {                                                               \
                 memmove_s(obj->_buffer + index, obj->_capacity,                                     \
                     obj->_buffer + index + 1, obj->_size - index - 1);                              \
@@ -104,15 +105,22 @@ extern "C" {
 
 #define _DEFINE_VECTOR_ASSIGN_FUN(type)                                                             \
     inline void _vector_##type##_assign(vector_##type* dist, const vector_##type* src) {            \
-        if (src != NULL && src->_buffer != NULL && src->_capacity != 0) {                           \
-            if (dist != NULL) {                                                                     \
-                dist->_size = src->_size;                                                           \
-                dist->_capacity = src->_capacity;                                                   \
-                dist->_buffer = (type*)realloc(dist->_buffer, dist->_capacity * sizeof(type));      \
-                memcpy_s(dist->_buffer, dist->_capacity * sizeof(type),                             \
-                    src->_buffer, src->_capacity * sizeof(type));                                   \
-            }                                                                                       \
+        assert(dist != NULL && __FUNCTION__": dist is NULL");                                       \
+        assert(src != NULL && __FUNCTION__": src is NULL");                                         \
+        if (src->_buffer != NULL && src->_capacity != 0) {                                          \
+            dist->_size = src->_size;                                                               \
+            dist->_capacity = src->_capacity;                                                       \
+            free(dist->_buffer);                                                                    \
+            dist->_buffer = (type*)malloc(dist->_capacity * sizeof(type));                          \
+            memcpy_s(dist->_buffer, dist->_capacity * sizeof(type),                                 \
+                src->_buffer, src->_capacity * sizeof(type));                                       \
         }                                                                                           \
+    }
+
+#define _DEFINE_VECTOR_CLEAR_FUN(type)                                                              \
+    inline void _vector_##type##_clear(const vector_##type* obj) {                                  \
+        assert(obj != NULL && __FUNCTION__": obj is NULL");                                         \
+        obj->_size = 0;                                                                             \
     }
 
 #define DEFINE_TYPED_VECTOR(type)                                                                   \
