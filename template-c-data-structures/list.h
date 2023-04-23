@@ -19,14 +19,19 @@ extern "C" {
         struct list_##type##_node* _prev;                                                                                               \
     } list_##type##_node;  
 
+#define _ALLOCATE_LIST_NODE(type, node_ptr, value, prev_ptr, next_ptr) {                                                                \
+    node_ptr = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                                                 \
+    node_ptr->_value = value;                                                                                                           \
+    node_ptr->_prev = prev_ptr;                                                                                                         \
+    node_ptr->_next = next_ptr;                                                                                                         \
+}                                                                                                                                       \
+
 #define _DEFINE_LIST_INIT_FUN(type)                                                                                                     \
     inline void _list_##type##_init(list_##type* obj) {                                                                                 \
         assert(obj != NULL && "_list_"#type"_init(list_"#type"* obj): obj is NULL");                                                    \
         obj->_size = 0;                                                                                                                 \
         obj->_head = NULL;                                                                                                              \
-        obj->_tail = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                                           \
-        obj->_tail->_prev = obj->_head;                                                                                                 \
-        obj->_tail->_next = NULL;                                                                                                       \
+        _ALLOCATE_LIST_NODE(type, obj->_tail, 0, obj->_head, NULL);                                                                     \
     }                                                                                                                                   \
 
 #define _DEFINE_LIST_FREE_FUN(type)                                                                                                     \
@@ -43,49 +48,34 @@ extern "C" {
         }                                                                                                                               \
     }                                                                                                                                   \
 
-// #define _DEFINE_LIST_PUSH_FRONT_FUN(type)                                                                                               \
-//     inline void _list_##type##_push_front(list_##type* obj, type value) {                                                               \
-//         assert(obj != NULL && "_list_"#type"_push_front(vector_"#type"* obj, type value): obj is NULL");                                \
-//         ++obj->_size;                                                                                                                   \
-//         if (obj->_head == NULL && obj->_tail == NULL) {                                                                                 \
-//             obj->_head = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                                       \
-//             obj->_tail = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                                       \
-//             obj->_head->_value = value;                                                                                                 \
-//             obj->_head->_prev = NULL;                                                                                                   \
-//             obj->_head->_next = obj->_tail;                                                                                             \
-//             obj->_tail->_prev = obj->_head;                                                                                             \
-//             obj->_tail->_next = NULL;                                                                                                   \
-//             memset(&obj->_tail->_value, 0, sizeof(obj->_tail->_value));                                                                 \
-//         } else {                                                                                                                        \
-//             list_##type##_node* temp = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                         \
-//             temp->_value = value;                                                                                                       \
-//             temp->_prev = NULL;                                                                                                         \
-//             temp->_next = obj->_head;                                                                                                   \
-//             obj->_head = temp;                                                                                                          \
-//         }                                                                                                                               \
-//     }                                                                                                                                   \
+#define _DEFINE_LIST_PUSH_FRONT_FUN(type)                                                                                               \
+    inline void _list_##type##_push_front(list_##type* obj, type value) {                                                               \
+        assert(obj != NULL && "_list_"#type"_push_back(vector_"#type"* obj, type value): obj is NULL");                                 \
+        if (obj->_size == 0) {                                                                                                          \
+            _ALLOCATE_LIST_NODE(type, obj->_head, value, NULL, obj->_tail);                                                             \
+            obj->_tail->_prev = obj->_head;                                                                                             \
+        } else {                                                                                                                        \
+            list_##type##_node* temp = NULL;                                                                                            \
+            _ALLOCATE_LIST_NODE(type, temp, value, NULL, obj->_head);                                                                   \
+            obj->_head = temp;                                                                                                          \
+        }                                                                                                                               \
+        ++obj->_size;                                                                                                                   \
+    }                                                                                                                                   \
 
-// #define _DEFINE_LIST_PUSH_BACK_FUN(type)                                                                                                \
-//     inline void _list_##type##_push_back(list_##type* obj, type value) {                                                                \
-//         assert(obj != NULL && "_list_"#type"_push_back(vector_"#type"* obj, type value): obj is NULL");                                 \
-//         ++obj->_size;                                                                                                                   \
-//         if (obj->_size == 0) {                                                                                                          \
-//             obj->_head = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                                       \
-//             obj->_tail = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                                       \
-//             obj->_head->_value = value;                                                                                                 \
-//             obj->_head->_prev = NULL;                                                                                                   \
-//             obj->_head->_next = obj->_tail;                                                                                             \
-//             obj->_tail->_prev = obj->_head;                                                                                             \
-//             obj->_tail->_next = NULL;                                                                                                   \
-//             memset(&obj->_tail->_value, 0, sizeof(obj->_tail->_value));                                                                 \
-//         } else {                                                                                                                        \
-//             list_##type##_node* temp = (list_##type##_node*)malloc(sizeof(list_##type##_node));                                         \
-//             temp->_value = value;                                                                                                       \
-//             temp->_prev = obj->_tail->_prev;                                                                                            \
-//             temp->_next = obj->_tail;                                                                                                   \
-//             obj->_tail->_prev = temp;                                                                                                   \
-//         }                                                                                                                               \
-//     }                                                                                                                                   \
+#define _DEFINE_LIST_PUSH_BACK_FUN(type)                                                                                                \
+    inline void _list_##type##_push_back(list_##type* obj, type value) {                                                                \
+        assert(obj != NULL && "_list_"#type"_push_back(vector_"#type"* obj, type value): obj is NULL");                                 \
+        if (obj->_size == 0) {                                                                                                          \
+            _ALLOCATE_LIST_NODE(type, obj->_head, value, NULL, obj->_tail);                                                             \
+            obj->_tail->_prev = obj->_head;                                                                                             \
+        } else {                                                                                                                        \
+            list_##type##_node* temp = NULL;                                                                                            \
+            _ALLOCATE_LIST_NODE(type, temp, value, obj->_tail->_prev, obj->_tail);                                                      \
+            obj->_tail->_prev->_next = temp;                                                                                            \
+            obj->_tail->_prev = temp;                                                                                                   \
+        }                                                                                                                               \
+        ++obj->_size;                                                                                                                   \
+    }                                                                                                                                   \
 
 #define _DEFINE_LIST_POP_BACK_FUN(type)                                                                                                 \
     inline void _list_##type##_pop_back(list_##type* obj) {                                                                             \
@@ -140,8 +130,8 @@ extern "C" {
     _DEFINE_LIST_SIZE_FUN(type);                                                                                                        \
     _DEFINE_LIST_POP_BACK_FUN(type);                                                                                                    \
     _DEFINE_LIST_POP_FRONT_FUN(type);                                                                                                   \
-    // _DEFINE_LIST_PUSH_FRONT_FUN(type);                                                                                                  \
-    // _DEFINE_LIST_PUSH_BACK_FUN(type);                                                                                                   \
+    _DEFINE_LIST_PUSH_BACK_FUN(type);                                                                                                   \
+    _DEFINE_LIST_PUSH_FRONT_FUN(type);                                                                                                  \
     
 
 #define LIST_CREATE(type, list_name) list_##type list_name; _list_##type##_init(&list_name)
@@ -151,8 +141,8 @@ extern "C" {
 #define LIST_SIZE(type, list_ptr) _list_##type##_size(list_ptr)
 
 
-// #define LIST_PUSH_FRONT(type, list_ptr, value) _list_##type##_push_front(list_ptr, value)
-// #define LIST_PUSH_BACK(type, list_ptr, value) _list_##type##_push_back(list_ptr, value)
+#define LIST_PUSH_FRONT(type, list_ptr, value) _list_##type##_push_front(list_ptr, value)
+#define LIST_PUSH_BACK(type, list_ptr, value) _list_##type##_push_back(list_ptr, value)
 #define LIST_POP_BACK(type, list_ptr) _list_##type##_pop_back(list_ptr)
 #define LIST_POP_FRONT(type, list_ptr) _list_##type##_pop_front(list_ptr)
 
