@@ -118,15 +118,15 @@ extern "C" {
     }                                                                                                                                   \
 
 #define _DEFINE_LIST_FRONT_FUN(type)                                                                                                    \
-    inline type* _list_##type##_front(list_##type* obj) {                                                                               \
+    inline list_##type##_node* _list_##type##_front(list_##type* obj) {                                                                 \
         assert(obj != NULL && "_list_"#type"_front(vector_"#type"* obj): obj is NULL");                                                 \
-        return obj->_head != NULL ? &obj->_head->_value : NULL;                                                                         \
+        return obj->_head;                                                                                                              \
     }                                                                                                                                   \
 
 #define _DEFINE_LIST_BACK_FUN(type)                                                                                                     \
-    inline type* _list_##type##_back(list_##type* obj) {                                                                                \
+    inline list_##type##_node* _list_##type##_back(list_##type* obj) {                                                                  \
         assert(obj != NULL && "_list_"#type"_back(vector_"#type"* obj): obj is NULL");                                                  \
-        return obj->_tail->_prev != NULL ? &obj->_tail->_prev->_value : NULL;                                                           \
+        return obj->_tail->_prev;                                                                                                       \
     }                                                                                                                                   \
 
 #define DEFINE_TYPED_LIST(type)                                                                                                         \
