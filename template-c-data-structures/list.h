@@ -61,6 +61,12 @@ extern "C" {
         }                                                                                                                               \
     }                                                                                                                                   \
 
+#define _DEFINE_LIST_SIZE_FUN(type)                                                                                                     \
+    inline size_t _list_##type##_size(const list_##type* obj) {                                                                         \
+        assert(obj != NULL && "_list_"#type"_size(vector_"#type"* obj): obj is NULL");                                                  \
+        return obj->_size;                                                                                                              \
+    }                                                                                                                                   \
+
 #define DEFINE_TYPED_LIST(type)                                                                                                         \
     _DEFINE_TYPED_LIST_NODE(type);                                                                                                      \
     typedef struct list_##type {                                                                                                        \
@@ -72,10 +78,14 @@ extern "C" {
     _DEFINE_LIST_INIT_FUN(type);                                                                                                        \
     _DEFINE_LIST_FREE_FUN(type);                                                                                                        \
     _DEFINE_LIST_PUSH_FRONT_FUN(type);                                                                                                  \
+    _DEFINE_LIST_SIZE_FUN(type);                                                                                                        \
     
 
 #define LIST_CREATE(type, list_name) list_##type list_name; _list_##type##_init(&list_name)
 #define LIST_FREE(type, list_ptr) _list_##type##_free(list_ptr)
+
+
+#define LIST_SIZE(type, list_ptr) _list_##type##_size(list_ptr)
 
 
 #define LIST_PUSH_FRONT(type, list_ptr, value) _list_##type##_push_front(list_ptr, value)
