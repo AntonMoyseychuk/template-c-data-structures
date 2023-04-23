@@ -167,7 +167,7 @@ extern "C" {
     _DEFINE_VECTOR_RESIZE_FUN(type);                                                                                            \
     _DEFINE_VECTOR_DATA_FUN(type);                                                                                            \
 
-#define VEC_CREATE(type, vec_name) vector_##type vec_name; vec_name._buffer = NULL; _vector_##type##_init(&vec_name)
+#define VEC_CREATE(type, vec_name) vector_##type vec_name; _vector_##type##_init(&vec_name)
 #define VEC_CREATE_SIZED(type, vec_name, size) vector_##type vec_name; vec_name._buffer = NULL; _vector_##type##_size_init(&vec_name, size)
 #define VEC_CREATE_SIZED_VALUE(type, vec_name, size, value) vector_##type vec_name; vec_name._buffer = NULL; _vector_##type##_size_value_init(&vec_name, size, value)
 
