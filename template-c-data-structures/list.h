@@ -103,8 +103,8 @@ extern "C" {
                 obj->_head = NULL;                                                                                                      \
                 obj->_tail->_prev = NULL;                                                                                               \
             } else {                                                                                                                    \
-                obj->_head->_next->_prev = NULL;                                                                                              \
-                obj->_head = obj->_head->_next;                                                                                               \
+                obj->_head->_next->_prev = NULL;                                                                                        \
+                obj->_head = obj->_head->_next;                                                                                         \
             }                                                                                                                           \
             free(temp);                                                                                                                 \
             --obj->_size;                                                                                                               \
@@ -113,8 +113,20 @@ extern "C" {
 
 #define _DEFINE_LIST_SIZE_FUN(type)                                                                                                     \
     inline size_t _list_##type##_size(const list_##type* obj) {                                                                         \
-        assert(obj != NULL && "_list_"#type"_size(vector_"#type"* obj): obj is NULL");                                                  \
+        assert(obj != NULL && "_list_"#type"_size(const vector_"#type"* obj): obj is NULL");                                            \
         return obj->_size;                                                                                                              \
+    }                                                                                                                                   \
+
+#define _DEFINE_LIST_FRONT_FUN(type)                                                                                                    \
+    inline type* _list_##type##_front(list_##type* obj) {                                                                               \
+        assert(obj != NULL && "_list_"#type"_front(vector_"#type"* obj): obj is NULL");                                                 \
+        return obj->_head != NULL ? &obj->_head->_value : NULL;                                                                         \
+    }                                                                                                                                   \
+
+#define _DEFINE_LIST_BACK_FUN(type)                                                                                                     \
+    inline type* _list_##type##_back(list_##type* obj) {                                                                                \
+        assert(obj != NULL && "_list_"#type"_back(vector_"#type"* obj): obj is NULL");                                                  \
+        return obj->_tail->_prev != NULL ? &obj->_tail->_prev->_value : NULL;                                                           \
     }                                                                                                                                   \
 
 #define DEFINE_TYPED_LIST(type)                                                                                                         \
@@ -132,14 +144,16 @@ extern "C" {
     _DEFINE_LIST_POP_FRONT_FUN(type);                                                                                                   \
     _DEFINE_LIST_PUSH_BACK_FUN(type);                                                                                                   \
     _DEFINE_LIST_PUSH_FRONT_FUN(type);                                                                                                  \
+    _DEFINE_LIST_FRONT_FUN(type);                                                                                                       \
+    _DEFINE_LIST_BACK_FUN(type);                                                                                                        \
     
 
 #define LIST_CREATE(type, list_name) list_##type list_name; _list_##type##_init(&list_name)
 #define LIST_FREE(type, list_ptr) _list_##type##_free(list_ptr)
 
-
 #define LIST_SIZE(type, list_ptr) _list_##type##_size(list_ptr)
-
+#define LIST_FRONT(type, list_ptr) _list_##type##_front(list_ptr)
+#define LIST_BACK(type, list_ptr) _list_##type##_back(list_ptr)
 
 #define LIST_PUSH_FRONT(type, list_ptr, value) _list_##type##_push_front(list_ptr, value)
 #define LIST_PUSH_BACK(type, list_ptr, value) _list_##type##_push_back(list_ptr, value)
