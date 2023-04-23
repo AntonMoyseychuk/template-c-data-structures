@@ -121,21 +121,21 @@ extern "C" {
     _DEFINE_VECTOR_ERASE_FUN(type);                                                             \
     _DEFINE_VECTOR_ASSIGN_FUN(type);                                                            \
 
-#define VEC_CREATE_DEFAULT(vec_name, type, size) vector_##type vec_name; _vector_##type##_init(&vec_name, size)
-#define VEC_CREATE(vec_name, type, size, value) vector_##type vec_name; _vector_##type##_arg_init(&vec_name, size, value)
-#define VEC_FREE(vec_ptr, type) _vector_##type##_free(vec_ptr)
+#define VEC_CREATE_DEFAULT(type, vec_name, size) vector_##type vec_name; _vector_##type##_init(&vec_name, size)
+#define VEC_CREATE(type, vec_name, size, value) vector_##type vec_name; _vector_##type##_arg_init(&vec_name, size, value)
+#define VEC_FREE(type, vec_ptr) _vector_##type##_free(vec_ptr)
 
-#define VEC_AT(vec_ptr, type, index) _vector_##type##_at(vec_ptr, index)
+#define VEC_AT(type, vec_ptr, index) _vector_##type##_at(vec_ptr, index)
 
-#define VEC_SIZE(vec_ptr, type) _vector_##type##_size(vec_ptr)
-#define VEC_CAPACITY(vec_ptr, type) _vector_##type##_capacity(vec_ptr)
+#define VEC_SIZE(type, vec_ptr) _vector_##type##_size(vec_ptr)
+#define VEC_CAPACITY(type, vec_ptr) _vector_##type##_capacity(vec_ptr)
 
-#define VEC_PUSH_BACK(vec_ptr, type, value) _vector_##type##_push_back(vec_ptr, value)
-#define VEC_POP_BACK(vec_ptr, type) _vector_##type##_pop_back(vec_ptr)
-#define VEC_ERASE(vec_ptr, type, index) _vector_##type##_erase(vec_ptr, index)
-#define VEC_ASSIGN(dist_ptr, src_ptr, type) _vector_##type##_assign(dist_ptr, src_ptr)
+#define VEC_PUSH_BACK(type, vec_ptr, value) _vector_##type##_push_back(vec_ptr, value)
+#define VEC_POP_BACK(type, vec_ptr) _vector_##type##_pop_back(vec_ptr)
+#define VEC_ERASE(type, vec_ptr, index) _vector_##type##_erase(vec_ptr, index)
+#define VEC_ASSIGN(type, dist_ptr, src_ptr) _vector_##type##_assign(dist_ptr, src_ptr)
 
-#define VEC_EMPTY(vec_ptr, type) _vector_##type##_empty(vec_ptr)
+#define VEC_EMPTY(type, vec_ptr) _vector_##type##_empty(vec_ptr)
 
 #ifdef __cplusplus
 }
