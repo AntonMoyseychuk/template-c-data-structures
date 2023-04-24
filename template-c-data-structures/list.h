@@ -176,6 +176,9 @@ extern "C" {
 #define LIST_POP_BACK(type, list_ptr) _list_##type##_pop_back(list_ptr)
 #define LIST_POP_FRONT(type, list_ptr) _list_##type##_pop_front(list_ptr)
 
+#define LIST_CREATE_ITER(list_type, iter_name) list_##list_type##_node* iter_name
+#define LIST_ITER_NEXT(iter) iter->_next
+#define LIST_ITER_VALUE(iter) iter->_value
 
 #ifdef __cplusplus
 }
