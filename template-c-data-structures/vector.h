@@ -201,7 +201,8 @@ extern "C" {
 #define VEC_RESIZE(type, vec_ptr, size) _vector_##type##_resize(vec_ptr, size)
 
 #define VEC_CREATE_ITER(vec_type, iter_name) vec_type* iter_name
-#define VEC_ITER_NEXT(iter) (++iter)
+#define VEC_ITER_NEXT(iter) (iter + 1)
+#define VEC_ITER_VALUE(iter) *iter
 
 #ifdef __cplusplus
 }
