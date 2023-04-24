@@ -31,7 +31,7 @@ extern "C" {
         assert(obj != NULL && "_list_"#type"_init(list_"#type"* obj): obj is NULL");                                                    \
         obj->_size = 0;                                                                                                                 \
         obj->_head = NULL;                                                                                                              \
-        _ALLOCATE_LIST_NODE(type, obj->_tail, 0, obj->_head, NULL);                                                                     \
+        _ALLOCATE_LIST_NODE(type, obj->_tail, (type)0, obj->_head, NULL);                                                                     \
     }                                                                                                                                   \
 
 #define _DEFINE_LIST_FREE_FUN(type)                                                                                                     \
@@ -118,15 +118,27 @@ extern "C" {
     }                                                                                                                                   \
 
 #define _DEFINE_LIST_FRONT_FUN(type)                                                                                                    \
-    inline list_##type##_node* _list_##type##_front(list_##type* obj) {                                                                 \
+    inline type* _list_##type##_front(list_##type* obj) {                                                                               \
         assert(obj != NULL && "_list_"#type"_front(vector_"#type"* obj): obj is NULL");                                                 \
-        return obj->_head;                                                                                                              \
+        return obj->_head != NULL ? &obj->_head->_value : NULL;                                                                         \
     }                                                                                                                                   \
 
 #define _DEFINE_LIST_BACK_FUN(type)                                                                                                     \
-    inline list_##type##_node* _list_##type##_back(list_##type* obj) {                                                                  \
-        assert(obj != NULL && "_list_"#type"_back(vector_"#type"* obj): obj is NULL");                                                  \
-        return obj->_tail->_prev;                                                                                                       \
+    inline type* _list_##type##_back(list_##type* obj) {                                                                                \
+        assert(obj != NULL && "_list_"#type"_front(vector_"#type"* obj): obj is NULL");                                                 \
+        return obj->_tail->_prev != NULL ? &obj->_tail->_prev->_value : NULL;                                                           \
+    }                                                                                                                                   \
+
+#define _DEFINE_LIST_BEGIN_FUN(type)                                                                                                    \
+    inline list_##type##_node* _list_##type##_begin(list_##type* obj) {                                                                 \
+        assert(obj != NULL && "_list_"#type"_begin(vector_"#type"* obj): obj is NULL");                                                 \
+        return obj->_head;                                                                                                              \
+    }                                                                                                                                   \
+
+#define _DEFINE_LIST_END_FUN(type)                                                                                                      \
+    inline list_##type##_node* _list_##type##_end(list_##type* obj) {                                                                   \
+        assert(obj != NULL && "_list_"#type"_end(vector_"#type"* obj): obj is NULL");                                                   \
+        return obj->_tail;                                                                                                              \
     }                                                                                                                                   \
 
 #define DEFINE_TYPED_LIST(type)                                                                                                         \
@@ -146,6 +158,8 @@ extern "C" {
     _DEFINE_LIST_PUSH_FRONT_FUN(type);                                                                                                  \
     _DEFINE_LIST_FRONT_FUN(type);                                                                                                       \
     _DEFINE_LIST_BACK_FUN(type);                                                                                                        \
+    _DEFINE_LIST_BEGIN_FUN(type);                                                                                                       \
+    _DEFINE_LIST_END_FUN(type);                                                                                                         \
     
 
 #define LIST_CREATE(type, list_name) list_##type list_name; _list_##type##_init(&list_name)
@@ -154,6 +168,8 @@ extern "C" {
 #define LIST_SIZE(type, list_ptr) _list_##type##_size(list_ptr)
 #define LIST_FRONT(type, list_ptr) _list_##type##_front(list_ptr)
 #define LIST_BACK(type, list_ptr) _list_##type##_back(list_ptr)
+#define LIST_BEGIN(type, list_ptr) _list_##type##_begin(list_ptr)
+#define LIST_END(type, list_ptr) _list_##type##_end(list_ptr)
 
 #define LIST_PUSH_FRONT(type, list_ptr, value) _list_##type##_push_front(list_ptr, value)
 #define LIST_PUSH_BACK(type, list_ptr, value) _list_##type##_push_back(list_ptr, value)
