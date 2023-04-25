@@ -16,23 +16,26 @@ extern "C" {
 #define _DEFINE_VECTOR_INIT_FUN(type)                                                                                           \
     inline void _vector_##type##_init(vector_##type* obj) {                                                                     \
         assert(obj != NULL && "_vector_"#type"_init(vector_"#type"* obj): obj is NULL");                                        \
-        obj->_buffer = (type*)malloc(2 * sizeof(type));                                                                         \
+        obj->_buffer = NULL;                                                                                                    \
         obj->_size = obj->_capacity = 0;                                                                                        \
     }
 
 #define _DEFINE_VECTOR_INIT_SIZE_FUN(type)                                                                                      \
     inline void _vector_##type##_size_init(vector_##type* obj, size_t size) {                                                   \
         assert(obj != NULL && "_vector_"#type"_size_init(vector_"#type"* obj, size_t size): obj is NULL");                      \
-        obj->_buffer = (type*)malloc(sizeof(type) * (1 + size));                                                                \
         obj->_size = obj->_capacity = size;                                                                                     \
-        memset(obj->_buffer, 0, obj->_capacity * sizeof(type));                                                                 \
+        obj->_buffer = NULL;                                                                                                    \
+        if (obj->_capacity > 0) {                                                                                               \
+            obj->_buffer = (type*)malloc(sizeof(type) * size);                                                                  \
+            memset(obj->_buffer, 0, obj->_capacity * sizeof(type));                                                             \
+        }                                                                                                                       \
     }
 
 #define _DEFINE_VECTOR_INIT_SIZE_DEFUALT_VALUE_FUN(type)                                                                        \
     inline void _vector_##type##_size_value_init(vector_##type* obj, size_t size, type value) {                                 \
         assert(obj != NULL && "_vector_"#type"_size_value_init(vector_"#type"* obj, size_t size, type value): obj is NULL");    \
-        obj->_buffer = (type*)malloc(sizeof(type) * (1 + size));                                                                \
         obj->_size = obj->_capacity = size;                                                                                     \
+        obj->_buffer = size > 0 ? (type*)malloc(sizeof(type) * size) : NULL;                                                    \
         for (size_t i = 0; i < obj->_size; ++i) {                                                                               \
             obj->_buffer[i] = value;                                                                                            \
         }                                                                                                                       \
@@ -67,9 +70,11 @@ extern "C" {
 #define _DEFINE_VECTOR_PUSH_BACK_FUN(type)                                                                                      \
     inline void _vector_##type##_push_back(vector_##type* obj, type value) {                                                    \
         assert(obj != NULL && "_vector_"#type"_push_back(vector_"#type"* obj, type value): obj is NULL");                       \
-        if (obj->_size >= obj->_capacity) {                                                                                     \
-            obj->_capacity = (obj->_capacity + 1) * 1.5f;                                                                       \
-            obj->_buffer = (type*)realloc(obj->_buffer, (obj->_capacity + 1) * sizeof(type));                                   \
+        if (obj->_size == obj->_capacity) {                                                                                     \
+            const size_t old_capacity = obj->_capacity;                                                                         \
+            obj->_capacity = (old_capacity < 2) ? 2 : obj->_capacity * 1.5f;                                                    \
+            obj->_buffer = (old_capacity > 0) ? (type*)realloc(obj->_buffer, obj->_capacity * sizeof(type)) :                   \
+                (type*)malloc(obj->_capacity * sizeof(type));                                                                   \
         }                                                                                                                       \
         obj->_buffer[obj->_size++] = value;                                                                                     \
     }
@@ -91,9 +96,9 @@ extern "C" {
 #define _DEFINE_VECTOR_ERASE_FUN(type)                                                                                          \
     inline void _vector_##type##_erase(vector_##type* obj, const type* iter) {                                                  \
         assert(obj != NULL && "_vector_"#type"_erase(vector_"#type"* obj, size_t index): obj is NULL");                         \
-        if (obj->_buffer != NULL && obj->_size != 0) {                                                                          \
+        if (obj->_buffer != NULL && obj->_size > 0) {                                                                           \
             if (iter >= obj->_buffer && iter < obj->_buffer + obj->_size) {                                                     \
-                memmove_s(iter, obj->_buffer + obj->_capacity + 1, iter + 1, obj->_buffer + obj->_size - iter - 1);             \
+                memmove_s(iter, obj->_buffer + obj->_capacity, iter + 1, obj->_buffer + obj->_size - iter - 1);                 \
                 --obj->_size;                                                                                                   \
             }                                                                                                                   \
         }                                                                                                                       \
@@ -103,13 +108,13 @@ extern "C" {
     inline void _vector_##type##_assign(vector_##type* dist, const vector_##type* src) {                                        \
         assert(dist != NULL && "_vector_"#type"_assign(vector_"#type"* dist, const vector_##type* src): dist is NULL");         \
         assert(src != NULL && "_vector_"#type"_assign(vector_"#type"* dist, const vector_##type* src): src is NULL");           \
-        if (src->_buffer != NULL && src->_capacity != 0) {                                                                      \
+        if (src->_buffer != NULL && src->_capacity > 0) {                                                                       \
             dist->_size = src->_size;                                                                                           \
             dist->_capacity = src->_capacity;                                                                                   \
             free(dist->_buffer);                                                                                                \
-            dist->_buffer = (type*)malloc((dist->_capacity + 1) * sizeof(type));                                                \
-            memcpy_s(dist->_buffer, (dist->_capacity + 1) * sizeof(type),                                                       \
-                src->_buffer, (src->_capacity + 1) * sizeof(type));                                                             \
+            dist->_buffer = (type*)malloc(dist->_capacity * sizeof(type));                                                      \
+            memcpy_s(dist->_buffer, dist->_capacity * sizeof(type),                                                             \
+                src->_buffer, src->_capacity * sizeof(type));                                                                   \
         }                                                                                                                       \
     }
 
@@ -126,10 +131,10 @@ extern "C" {
             obj->_size = new_size;                                                                                              \
         } else {                                                                                                                \
             if(obj->_buffer == NULL) {                                                                                          \
-                obj->_buffer = (type*)malloc((new_size + 1) * sizeof(type));                                                    \
+                obj->_buffer = (type*)malloc(new_size * sizeof(type));                                                          \
                 memset(obj->_buffer, 0, new_size * sizeof(type));                                                               \
             } else {                                                                                                            \
-                obj->_buffer = (type*)realloc(obj->_buffer, (new_size + 1) * sizeof(type));                                     \
+                obj->_buffer = (type*)realloc(obj->_buffer, new_size * sizeof(type));                                           \
                 memset(obj->_buffer + obj->_capacity, 0, (new_size - obj->_capacity) * sizeof(type));                           \
             }                                                                                                                   \
             obj->_size = obj->_capacity = new_size;                                                                             \
@@ -174,7 +179,7 @@ extern "C" {
     _DEFINE_VECTOR_RESIZE_FUN(type);                                                                                            \
     _DEFINE_VECTOR_DATA_FUN(type);                                                                                              \
     _DEFINE_VECTOR_BEGIN_FUN(type);                                                                                             \
-    _DEFINE_VECTOR_END_FUN(type);                                                                                             \
+    _DEFINE_VECTOR_END_FUN(type);                                                                                               \
 
 #define VEC_CREATE(type, vec_name) vector_##type vec_name; _vector_##type##_init(&vec_name)
 #define VEC_CREATE_SIZED(type, vec_name, size) vector_##type vec_name; _vector_##type##_size_init(&vec_name, size)
