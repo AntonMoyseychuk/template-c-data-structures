@@ -95,6 +95,47 @@ extern "C" {
         return obj->_root;                                                                                                              \
     }                                                                                                                                   \
 
+#define __DEFINE_BST_ERASE_RECURSIVE_FUN(type)                                                                                          \
+    inline _bst_##type##_node* __bst_##type##_erase_recursive(_bst_##type##_node* node, type value) {                                   \
+        if (node == NULL) {                                                                                                             \
+            return NULL;                                                                                                                \
+        }                                                                                                                               \
+        \
+        if (value < node->_value) {                                                                                                     \
+            node->_left = __bst_##type##_erase_recursive(node->_left, value);                                                           \
+        } else if (value > node->_value) {                                                                                              \
+            node->_right = __bst_##type##_erase_recursive(node->_right, value);                                                         \
+        } else {                                                                                                                        \
+            if (node->_left == NULL) {                                                                                                  \
+                _bst_##type##_node* temp = node->_right;                                                                                \
+                free(node);                                                                                                             \
+                return temp;                                                                                                            \
+            } else if (node->_right == NULL) {                                                                                          \
+                _bst_##type##_node* temp = node->_left;                                                                                 \
+                free(node);                                                                                                             \
+                return temp;                                                                                                            \
+            }                                                                                                                           \
+            \
+            _bst_##type##_node* most_left_node = node->_right;                                                                          \
+            while(most_left_node != NULL && most_left_node->_left != NULL) {                                                            \
+                most_left_node = most_left_node->_left;                                                                                 \
+            }                                                                                                                           \
+            node->_value = most_left_node->_value;                                                                                      \
+            node->_right = __bst_##type##_erase_recursive(node->_right, most_left_node->_value);                                        \
+        }                                                                                                                               \
+        return node;                                                                                                                    \
+    }                                                                                                                                   \
+
+#define _DEFINE_BST_ERASE_FUN(type)                                                                                                     \
+    inline void _bst_##type##_erase(_bst_##type* obj, type value) {                                                                     \
+        assert(obj != NULL && "_bst_"#type"_erase(_bst_"#type"* obj, type value): obj is NULL");                                        \
+        _bst_##type##_node* is_exist = _bst_##type##_find(obj, value);                                                                  \
+        if (is_exist) {                                                                                                                 \
+            __bst_##type##_erase_recursive(obj->_root, value);                                                                          \
+            --obj->_size;                                                                                                               \
+        }                                                                                                                               \
+    }                                                                                                                                   \
+
 #define _DEFINE_TYPED_BST(type)                                                                                                         \
     _DEFINE_TYPED_BST_NODE(type);                                                                                                       \
     typedef struct _bst_##type {                                                                                                        \
@@ -109,7 +150,8 @@ extern "C" {
     _DEFINE_BST_INSERT_FUN(type);                                                                                                       \
     __DEFINE_BST_FREE_RECURSIVE_FUN(type);                                                                                              \
     _DEFINE_BST_FREE_FUN(type);                                                                                                         \
-
+    __DEFINE_BST_ERASE_RECURSIVE_FUN(type);                                                                                             \
+    _DEFINE_BST_ERASE_FUN(type);                                                                                                        \
 
 #define BST_CREATE(type, bst_name) _bst_##type bst_name; _bst_##type##_init(&bst_name)
 #define BST_FREE(type, bst_ptr) _bst_##type##_free(bst_ptr)
@@ -117,6 +159,7 @@ extern "C" {
 #define BST_FIND(type, bst_ptr, value) _bst_##type##_find(bst_ptr, value)
 
 #define BST_INSERT(type, bst_ptr, value) _bst_##type##_insert(bst_ptr, value)
+#define BST_ERASE(type, bst_ptr, value) _bst_##type##_erase(bst_ptr, value)
 
 
 #ifdef __cplusplus
