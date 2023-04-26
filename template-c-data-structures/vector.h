@@ -94,8 +94,8 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_ERASE_FUN(type)                                                                                          \
-    inline void _vector_##type##_erase(vector_##type* obj, const type* iter) {                                                  \
-        assert(obj != NULL && "_vector_"#type"_erase(vector_"#type"* obj, const type* iter): obj is NULL");                     \
+    inline void _vector_##type##_erase(vector_##type* obj, type* iter) {                                                        \
+        assert(obj != NULL && "_vector_"#type"_erase(vector_"#type"* obj, type* iter): obj is NULL");                           \
         if (obj->_buffer != NULL && obj->_size > 0) {                                                                           \
             if (iter >= obj->_buffer && iter < obj->_buffer + obj->_size) {                                                     \
                 memmove_s(iter, obj->_capacity, iter + 1, obj->_buffer + obj->_size - iter - 1);                                \
