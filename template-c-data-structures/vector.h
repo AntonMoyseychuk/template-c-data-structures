@@ -147,12 +147,12 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_BEGIN_FUN(type)                                                                                          \
-    inline const type* _vector_##type##_begin(const vector_##type* obj) {                                                       \
+    inline type* _vector_##type##_begin(const vector_##type* obj) {                                                             \
         return obj != NULL ? obj->_buffer : NULL;                                                                               \
     }
 
 #define _DEFINE_VECTOR_END_FUN(type)                                                                                            \
-    inline const type* _vector_##type##_end(const vector_##type* obj) {                                                         \
+    inline type* _vector_##type##_end(const vector_##type* obj) {                                                               \
         return obj != NULL ? obj->_buffer + obj->_size : NULL;                                                                  \
     }
 
