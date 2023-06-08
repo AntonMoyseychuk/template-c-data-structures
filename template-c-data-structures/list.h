@@ -159,10 +159,11 @@ extern "C" {
     _DEFINE_LIST_FRONT_FUN(type);                                                                                                       \
     _DEFINE_LIST_BACK_FUN(type);                                                                                                        \
     _DEFINE_LIST_BEGIN_FUN(type);                                                                                                       \
-    _DEFINE_LIST_END_FUN(type);                                                                                                         \
+    _DEFINE_LIST_END_FUN(type)                                                                                                          \
     
 
-#define LIST_CREATE(type, list_name) list_##type list_name; _list_##type##_init(&list_name)
+#define LIST_DECLARE_INSTANCE(type, list_name) list_##type list_name
+#define LIST_DEFAULT_CONSTRUCTOR(type, list_ptr) _list_##type##_init(list_ptr)
 #define LIST_FREE(type, list_ptr) _list_##type##_free(list_ptr)
 
 #define LIST_SIZE(type, list_ptr) _list_##type##_size(list_ptr)

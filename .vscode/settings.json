@@ -4,6 +4,7 @@
         "stdio.h": "c",
         "stdint.h": "c",
         "memory.h": "c",
-        "corecrt_memory.h": "c"
+        "corecrt_memory.h": "c",
+        "array.h": "c"
     }
 }
