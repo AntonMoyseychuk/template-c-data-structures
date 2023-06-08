@@ -1,15 +1,15 @@
 #ifndef BST_H
 #define BST_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
 
 #include <stdio.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define __ALLOCATE_BST_NODE(type, node_ptr, value, left_ptr, right_ptr) {                                                               \
     node_ptr = (_bst_##type##_node*)malloc(sizeof(_bst_##type##_node));                                                                 \
