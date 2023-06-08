@@ -181,9 +181,11 @@ extern "C" {
     _DEFINE_VECTOR_BEGIN_FUN(type);                                                                                             \
     _DEFINE_VECTOR_END_FUN(type);                                                                                               \
 
-#define VEC_CREATE(type, vec_name) vector_##type vec_name; _vector_##type##_init(&vec_name)
-#define VEC_CREATE_SIZED(type, vec_name, size) vector_##type vec_name; _vector_##type##_size_init(&vec_name, size)
-#define VEC_CREATE_SIZED_VALUE(type, vec_name, size, value) vector_##type vec_name; _vector_##type##_size_value_init(&vec_name, size, value)
+
+#define VEC_DECLARE_INSTANCE(type, vec_name) vector_##type vec_name
+#define VEC_DEFAULT_CONSTRUCTOR(type, vec_ptr) _vector_##type##_init(vec_ptr)
+#define VEC_SIZED_CONSTRUCTOR(type, vec_ptr, size) _vector_##type##_size_init(vec_ptr, size)
+#define VEC_SIZED_VALUE_CONSTRUCTOR(type, vec_ptr, size, value) _vector_##type##_size_value_init(vec_ptr, size, value)
 
 #define VEC_FREE(type, vec_ptr) _vector_##type##_free(vec_ptr)
 

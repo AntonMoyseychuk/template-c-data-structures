@@ -5,6 +5,7 @@
         "stdint.h": "c",
         "memory.h": "c",
         "corecrt_memory.h": "c",
-        "array.h": "c"
+        "array.h": "c",
+        "list.h": "c"
     }
 }
