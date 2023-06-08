@@ -2,6 +2,8 @@
     "files.associations": {
         "vector.h": "c",
         "stdio.h": "c",
-        "stdint.h": "c"
+        "stdint.h": "c",
+        "memory.h": "c",
+        "corecrt_memory.h": "c"
     }
 }

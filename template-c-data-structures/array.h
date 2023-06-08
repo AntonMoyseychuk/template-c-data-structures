@@ -7,6 +7,8 @@ extern "C" {
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
+#include <memory.h>
 
 #define _DEFINE_ARRAY_INIT_FUN(type, size)                                                                                      \
     inline void _array_##type##_##size##_init(array_##type##_##size* obj) {                                                     \
@@ -75,7 +77,7 @@ extern "C" {
 
 #define DEFINE_TYPED_ARRAY(type, size)                                                                                          \
     typedef struct array_##type##_##size {                                                                                      \
-        type _buffer[size];                                                                                                     \
+        type _buffer[(size)];                                                                                                     \
         size_t _size;                                                                                                           \
     } array_##type##_##size;                                                                                                    \
     \
@@ -91,8 +93,9 @@ extern "C" {
     _DEFINE_ARRAY_END_FUN(type, size);                                                                                          \
 
 
-#define ARRAY_CREATE(type, size, arr_name) array_##type##_##size arr_name; _array_##type##_##size##_init(&arr_name)
-#define ARRAY_CREATE_VALUE(type, size, arr_name, value) array_##type##_##size arr_name; _array_##type##_##size##_value_init(&arr_name, value)
+#define ARRAY_DECLARE_INSTANCE(type, size, arr_name) array_##type##_##size arr_name
+#define ARRAY_DEFAULT_CONSTRUCTOR(type, size, arr_ptr) _array_##type##_##size##_init(arr_ptr)
+#define ARRAY_VALUE_CONSTRUCTOR(type, size, arr_ptr, value) _array_##type##_##size##_value_init(arr_ptr, value)
 #define ARRAY_AT(type, size, arr_ptr, index) _array_##type##_##size##_at(arr_ptr, index)
 #define ARRAY_SIZE(type, size, arr_ptr) _array_##type##_##size##_size(arr_ptr)
 #define ARRAY_EMPTY(type, size, arr_ptr) _array_##type##_##size##_empty(arr_ptr)
