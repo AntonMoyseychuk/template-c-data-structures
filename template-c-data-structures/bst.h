@@ -27,8 +27,8 @@ extern "C" {
     } _bst_##type##_node;  
 
 #define _DEFINE_BST_INIT_FUN(type)                                                                                                      \
-    inline void _bst_##type##_init(bst_##type* obj) {                                                                                  \
-        assert(obj != NULL && "_bst_"#type"_init(_bst_"#type"* obj): obj is NULL");                                                     \
+    inline void _bst_##type##_init(bst_##type* obj) {                                                                                   \
+        assert(obj != NULL);                                                                                                            \
         obj->_size = 0;                                                                                                                 \
         obj->_root = NULL;                                                                                                              \
     }                                                                                                                                   \
@@ -40,13 +40,12 @@ extern "C" {
         }                                                                                                                               \
         __bst_##type##_free_recursive(node->_left);                                                                                     \
         __bst_##type##_free_recursive(node->_right);                                                                                    \
-        printf_s("[debug]: free(%p)\n", node);                                                                                          \
         free(node);                                                                                                                     \
     }                                                                                                                                   \
 
 #define _DEFINE_BST_FREE_FUN(type)                                                                                                      \
-    inline void _bst_##type##_free(bst_##type* obj) {                                                                                  \
-        assert(obj != NULL && "_bst_"#type"_free(_bst_"#type"* obj): obj is NULL");                                                     \
+    inline void _bst_##type##_free(bst_##type* obj) {                                                                                   \
+        assert(obj != NULL);                                                                                                            \
         obj->_size = 0;                                                                                                                 \
         __bst_##type##_free_recursive(obj->_root);                                                                                      \
     }                                                                                                                                   \
@@ -63,8 +62,8 @@ extern "C" {
     }
 
 #define _DEFINE_BST_FIND_FUN(type)                                                                                                      \
-    inline _bst_##type##_node* _bst_##type##_find(const bst_##type* obj, type value) {                                                 \
-        assert(obj != NULL && "_bst_"#type"_find(const _bst_"#type"* obj, type value): obj is NULL");                                   \
+    inline _bst_##type##_node* _bst_##type##_find(const bst_##type* obj, type value) {                                                  \
+        assert(obj != NULL);                                                                                                            \
         return __bst_##type##_find_recursive(obj->_root, value);                                                                        \
     }
 
@@ -84,8 +83,8 @@ extern "C" {
     }                                                                                                                                   \
 
 #define _DEFINE_BST_INSERT_FUN(type)                                                                                                    \
-    inline _bst_##type##_node* _bst_##type##_insert(bst_##type* obj, type value) {                                                     \
-        assert(obj != NULL && "_bst_"#type"_insert(_bst_"#type"* obj, type value): obj is NULL");                                       \
+    inline _bst_##type##_node* _bst_##type##_insert(bst_##type* obj, type value) {                                                      \
+        assert(obj != NULL);                                                                                                            \
         _bst_##type##_node* is_exist = _bst_##type##_find(obj, value);                                                                  \
         if (is_exist) {                                                                                                                 \
             return NULL;                                                                                                                \
@@ -127,8 +126,8 @@ extern "C" {
     }                                                                                                                                   \
 
 #define _DEFINE_BST_ERASE_FUN(type)                                                                                                     \
-    inline void _bst_##type##_erase(bst_##type* obj, type value) {                                                                     \
-        assert(obj != NULL && "_bst_"#type"_erase(_bst_"#type"* obj, type value): obj is NULL");                                        \
+    inline void _bst_##type##_erase(bst_##type* obj, type value) {                                                                      \
+        assert(obj != NULL);                                                                                                            \
         _bst_##type##_node* is_exist = _bst_##type##_find(obj, value);                                                                  \
         if (is_exist) {                                                                                                                 \
             __bst_##type##_erase_recursive(obj->_root, value);                                                                          \
@@ -136,12 +135,12 @@ extern "C" {
         }                                                                                                                               \
     }                                                                                                                                   \
 
-#define DEFINE_TYPED_BST(type)                                                                                                         \
+#define DEFINE_TYPED_BST(type)                                                                                                          \
     _DEFINE_TYPED_BST_NODE(type);                                                                                                       \
     typedef struct _bst_##type {                                                                                                        \
         size_t _size;                                                                                                                   \
         _bst_##type##_node* _root;                                                                                                      \
-    } bst_##type;                                                                                                                      \
+    } bst_##type;                                                                                                                       \
     \
     _DEFINE_BST_INIT_FUN(type);                                                                                                         \
     __DEFINE_BST_FIND_RECURSIVE_FUN(type);                                                                                              \

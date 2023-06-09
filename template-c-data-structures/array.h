@@ -12,14 +12,14 @@ extern "C" {
 
 #define _DEFINE_ARRAY_INIT_FUN(type, size)                                                                                      \
     inline void _array_##type##_##size##_init(array_##type##_##size* obj) {                                                     \
-        assert(obj != NULL && "_array_"#type"_"#size"_init(array_"#type"_"#size"* obj): obj is NULL");                          \
+        assert(obj != NULL);                                                                                                    \
         obj->_size = (size);                                                                                                    \
         memset(obj->_buffer, (type)0, (size) * sizeof(type));                                                                   \
     }
 
 #define _DEFINE_ARRAY_INIT_DEFAULT_VALUE_FUN(type, size)                                                                        \
     inline void _array_##type##_##size##_value_init(array_##type##_##size* obj, type value) {                                   \
-        assert(obj != NULL && "_array_"#type"_"#size"_value_init(array_"#type"_"#size"* obj, type value): obj is NULL");        \
+        assert(obj != NULL);                                                                                                    \
         obj->_size = (size);                                                                                                    \
         for (size_t i = 0; i < obj->_size; ++i) {                                                                               \
             obj->_buffer[i] = value;                                                                                            \
@@ -28,33 +28,33 @@ extern "C" {
 
 #define _DEFINE_ARRAY_AT_FUN(type, size)                                                                                        \
     inline type* _array_##type##_##size##_at(array_##type##_##size* obj, size_t index) {                                        \
-        assert(obj != NULL && "_array_"#type"_"#size"_at(array_"#type"_"#size"* obj, size_t index): obj is NULL");              \
-        assert(index < obj->_size && "_array_"#type"_"#size"_at(array_"#type"_"#size"* obj, size_t index): index is >= vector size");         \
+        assert(obj != NULL);                                                                                                    \
+        assert(index < obj->_size);                                                                                             \
         return &(obj->_buffer[index]);                                                                                          \
     }
 
 #define _DEFINE_ARRAY_SIZE_FUN(type, size)                                                                                      \
     inline size_t _array_##type##_##size##_size(const array_##type##_##size* obj) {                                             \
-        assert(obj != NULL && "_array_"#type"_"#size"_size(const array_"#type"_"#size"* obj): obj is NULL");                    \
+        assert(obj != NULL);                                                                                                    \
         return obj->_size;                                                                                                      \
     }
 
 #define _DEFINE_ARRAY_EMPTY_FUN(type, size)                                                                                     \
     inline int8_t _array_##type##_##size##_empty(const array_##type##_##size* obj) {                                            \
-        assert(obj != NULL && "_array_"#type"_"#size"_empty(const array_"#type"_"#size"* obj): obj is NULL");                   \
+        assert(obj != NULL);                                                                                                    \
         return obj->_size == 0;                                                                                                 \
     }
 
 #define _DEFINE_ARRAY_ASSIGN_FUN(type, size)                                                                                    \
     inline void _array_##type##_##size##_assign(array_##type##_##size* dist, const array_##type##_##size* src) {                \
-        assert(dist != NULL && "_array_"#type"_"#size"_assign(array_"#type"_"#size"* dist, const array_"#type"_"#size"* src): dist is NULL");     \
-        assert(src != NULL && "_array_"#type"_"#size"_assign(array_"#type"_"#size"* dist, const array_"#type"_"#size"* src): src is NULL");       \
+        assert(dist != NULL);                                                                                                   \
+        assert(src != NULL);                                                                                                    \
         memcpy_s(dist->_buffer, (size) * sizeof(type), src->_buffer, (size) * sizeof(type));                                    \
     }
 
 #define _DEFINE_ARRAY_FILL_FUN(type, size)                                                                                      \
     inline void _array_##type##_##size##_fill(array_##type##_##size* obj, type value) {                                         \
-        assert(obj != NULL && "_array_"#type"_"#size"_fill(array_"#type"_"#size"* obj, type value): obj is NULL");              \
+        assert(obj != NULL);                                                                                                    \
         for (size_t i = 0; i < obj->_size; ++i) {                                                                               \
             obj->_buffer[i] = value;                                                                                            \
         }                                                                                                                       \
@@ -77,7 +77,7 @@ extern "C" {
 
 #define DEFINE_TYPED_ARRAY(type, size)                                                                                          \
     typedef struct array_##type##_##size {                                                                                      \
-        type _buffer[(size)];                                                                                                     \
+        type _buffer[(size)];                                                                                                   \
         size_t _size;                                                                                                           \
     } array_##type##_##size;                                                                                                    \
     \
