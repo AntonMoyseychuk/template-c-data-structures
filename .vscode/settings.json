@@ -30,6 +30,8 @@
         "algorithm": "c",
         "ios": "c",
         "chrono": "c",
-        "util_macro.h": "c"
+        "util_macro.h": "c",
+        "atomic": "c",
+        "iterator": "c"
     }
 }
