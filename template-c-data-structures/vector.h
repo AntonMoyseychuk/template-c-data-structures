@@ -1,10 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <memory.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -12,16 +8,21 @@ extern "C" {
 
 #include <stdio.h>
 
+#include "util_macro.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define _DEFINE_VECTOR_INIT_FUN(type) \
-    inline void _vector_##type##_init(vector_##type* obj) { \
+    inline void vector_##type##_default_constr(vector_##type* obj) { \
         assert(obj != NULL); \
         obj->_buffer = NULL; \
         obj->_size = obj->_capacity = 0; \
     }
 
 #define _DEFINE_VECTOR_INIT_SIZE_FUN(type) \
-    inline void _vector_##type##_size_init(vector_##type* obj, size_t size) { \
+    inline void vector_##type##_size_constr(vector_##type* obj, size_t size) { \
         assert(obj != NULL); \
         obj->_size = obj->_capacity = size; \
         obj->_buffer = NULL; \
@@ -32,7 +33,7 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_INIT_SIZE_DEFUALT_VALUE_FUN(type) \
-    inline void _vector_##type##_size_value_init(vector_##type* obj, size_t size, type value) { \
+    inline void vector_##type##_size_value_constr(vector_##type* obj, size_t size, type value) { \
         assert(obj != NULL); \
         obj->_size = obj->_capacity = size; \
         obj->_buffer = size > 0 ? (type*)malloc(sizeof(type) * size) : NULL; \
@@ -42,33 +43,33 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_FREE_FUN(type) \
-    inline void _vector_##type##_free(const vector_##type* obj) { \
+    inline void vector_##type##_free(const vector_##type* obj) { \
         if (obj != NULL) { \
             free(obj->_buffer); \
         } \
     }
 
 #define _DEFINE_VECTOR_AT_FUN(type) \
-    inline type* _vector_##type##_at(vector_##type* obj, size_t index) { \
+    inline type* vector_##type##_at(vector_##type* obj, size_t index) { \
         assert(obj != NULL); \
         assert(index < obj->_size); \
         return &(obj->_buffer[index]); \
     }
 
 #define _DEFINE_VECTOR_SIZE_FUN(type) \
-    inline size_t _vector_##type##_size(const vector_##type* obj) { \
+    inline size_t vector_##type##_size(const vector_##type* obj) { \
         assert(obj != NULL); \
         return obj->_size; \
     }
 
 #define _DEFINE_VECTOR_CAPACITY_FUN(type) \
-    inline size_t _vector_##type##_capacity(const vector_##type* obj) { \
+    inline size_t vector_##type##_capacity(const vector_##type* obj) { \
         assert(obj != NULL); \
         return obj->_capacity; \
     }
 
 #define _DEFINE_VECTOR_PUSH_BACK_FUN(type) \
-    inline void _vector_##type##_push_back(vector_##type* obj, type value) { \
+    inline void vector_##type##_push_back(vector_##type* obj, type value) { \
         assert(obj != NULL); \
         if (obj->_size == obj->_capacity) { \
             const size_t old_capacity = obj->_capacity; \
@@ -80,7 +81,7 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_POP_BACK_FUN(type) \
-    inline void _vector_##type##_pop_back(vector_##type* obj) { \
+    inline void vector_##type##_pop_back(vector_##type* obj) { \
         assert(obj != NULL); \
         if (obj->_size > 0) { \
             --obj->_size; \
@@ -88,13 +89,13 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_EMPTY_FUN(type) \
-    inline int8_t _vector_##type##_empty(const vector_##type* obj) { \
+    inline int8_t vector_##type##_empty(const vector_##type* obj) { \
         assert(obj != NULL); \
         return obj->_size == 0; \
     }
 
 #define _DEFINE_VECTOR_ERASE_FUN(type) \
-    inline void _vector_##type##_erase(vector_##type* obj, type* iter) { \
+    inline void vector_##type##_erase(vector_##type* obj, type* iter) { \
         assert(obj != NULL); \
         if (obj->_buffer != NULL && obj->_size > 0) { \
             if (iter >= obj->_buffer && iter < obj->_buffer + obj->_size) { \
@@ -105,7 +106,7 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_ASSIGN_FUN(type) \
-    inline void _vector_##type##_assign(vector_##type* dist, const vector_##type* src) { \
+    inline void vector_##type##_assign(vector_##type* dist, const vector_##type* src) { \
         assert(dist != NULL); \
         assert(src != NULL); \
         if (src->_buffer != NULL && src->_capacity > 0) { \
@@ -119,13 +120,13 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_CLEAR_FUN(type) \
-    inline void _vector_##type##_clear(vector_##type* obj) { \
+    inline void vector_##type##_clear(vector_##type* obj) { \
         assert(obj != NULL); \
         obj->_size = 0; \
     }
 
 #define _DEFINE_VECTOR_RESIZE_FUN(type) \
-    inline void _vector_##type##_resize(vector_##type* obj, size_t new_size) { \
+    inline void vector_##type##_resize(vector_##type* obj, size_t new_size) { \
         assert(obj != NULL); \
         if (new_size <= obj->_capacity) { \
             obj->_size = new_size; \
@@ -142,17 +143,17 @@ extern "C" {
     }
 
 #define _DEFINE_VECTOR_DATA_FUN(type) \
-    inline type* _vector_##type##_data(const vector_##type* obj) { \
+    inline type* vector_##type##_data(const vector_##type* obj) { \
         return obj != NULL ? obj->_buffer : NULL; \
     }
 
 #define _DEFINE_VECTOR_BEGIN_FUN(type) \
-    inline type* _vector_##type##_begin(const vector_##type* obj) { \
+    inline type* vector_##type##_begin(const vector_##type* obj) { \
         return obj != NULL ? obj->_buffer : NULL; \
     }
 
 #define _DEFINE_VECTOR_END_FUN(type) \
-    inline type* _vector_##type##_end(const vector_##type* obj) { \
+    inline type* vector_##type##_end(const vector_##type* obj) { \
         return obj != NULL ? obj->_buffer + obj->_size : NULL; \
     }
 
