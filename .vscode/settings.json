@@ -29,6 +29,7 @@
         "system_error": "c",
         "algorithm": "c",
         "ios": "c",
-        "chrono": "c"
+        "chrono": "c",
+        "util_macro.h": "c"
     }
 }
