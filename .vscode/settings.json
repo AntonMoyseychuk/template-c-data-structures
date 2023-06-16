@@ -32,6 +32,8 @@
         "chrono": "c",
         "util_macro.h": "c",
         "atomic": "c",
-        "iterator": "c"
+        "iterator": "c",
+        "optional": "c",
+        "xlocmon": "c"
     }
 }
